@@ -3,6 +3,7 @@ import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
+import { ParamsDTO } from './dto/search-params.dto';
 
 
 @Controller('todo')
@@ -10,15 +11,22 @@ export class TodoController {
     constructor(private readonly todoService: TodoService) { }
     @Get()
     findAll(
-        @Query('isAdmin') isAdmin: boolean = false,
         @Query('page') page: number = 1
     ): Promise<Todo[]> {
-        return this.todoService.findAll(isAdmin, page);
+        return this.todoService.findAll(page);
     }
 
     @Get('/status')
     getStatus() {
         return this.todoService.getStatus();
+    }
+
+    @Get('/search')
+    findBy(
+        @Body() params: ParamsDTO
+    ) {
+        console.log(params);
+        return this.todoService.findBy(params);
     }
 
     @Get('/:name')
@@ -49,7 +57,7 @@ export class TodoController {
         return this.todoService.softDelete(name);
     }
 
-    @Get('hard-delete/:name')
+    @Get('delete/:name')
     hardDeleteTodo(
         @Param('name') name: string,
     ) {

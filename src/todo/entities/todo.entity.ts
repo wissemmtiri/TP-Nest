@@ -1,5 +1,6 @@
 import { TimeStampColumns } from "src/generics/timestamp.entities";
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Status } from "../enums/status.enum";
 
 @Entity()
 export class Todo extends TimeStampColumns {
@@ -11,5 +12,5 @@ export class Todo extends TimeStampColumns {
     description: string;
 
     @Column()
-    completed: boolean;
+    state: Status;
 }
