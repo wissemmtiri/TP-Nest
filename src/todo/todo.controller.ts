@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Patch, Query } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
 import { AddTodoDto } from './dto/add-todo.dto';
@@ -12,7 +12,7 @@ export class TodoController {
     findAll(
         @Query('isAdmin') isAdmin: boolean = false,
         @Query('page') page: number = 1
-    ): Todo[] {
+    ): Promise<Todo[]> {
         return this.todoService.findAll(isAdmin, page);
     }
 
@@ -35,17 +35,31 @@ export class TodoController {
         return this.todoService.create(todo);
     }
 
-    @Put()
+    @Patch()
     updateTodo(
         @Body() todo: UpdateTodoDto
     ) {
         return this.todoService.update(todo);
     }
 
-    @Delete('/:name')
-    deleteTodo(
+    @Delete('soft-delete/:name')
+    softDeleteTodo(
+        @Param('name') name: string,
+    ) {
+        return this.todoService.softDelete(name);
+    }
+
+    @Get('hard-delete/:name')
+    hardDeleteTodo(
         @Param('name') name: string,
     ) {
         return this.todoService.delete(name);
+    }
+
+    @Get('restore/:name')
+    restoreTodo(
+        @Param('name') name: string,
+    ) {
+        return this.todoService.restore(name);
     }
 }

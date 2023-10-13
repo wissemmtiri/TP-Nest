@@ -1,114 +1,115 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Todo } from './entities/todo.entity';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TodoService {
-    constructor() {
-        this.todos = []
-    }
-    private todos: Todo[]
+    constructor(
+        @InjectRepository(Todo)
+        private todoRepository: Repository<Todo>
+    ) { }
 
-    findAll(isAdmin: boolean, page: number): Todo[] {
+    async findAll(isAdmin: boolean, page: number): Promise<Todo[]> {
         let start = (page - 1) * 2;
         let end = start + 2;
         let todos = [];
         if (isAdmin) {
-            todos.push(this.todos.slice(start, end));
+            todos = await this.todoRepository.find();
+            todos = todos.slice(start, end);
         }
         else {
-            todos = this.todos.filter((todo) => {
-                return todo.DeletedAt == null;
-            })
+            todos = await this.todoRepository.find({ where: { DeletedAt: null } });
             todos = todos.slice(start, end);
         }
         return todos;
     }
 
-    findOne(name: string) {
-        let exist: Todo = null;
-        this.todos.forEach((test) => {
-            if (test.name == name) {
-                exist = test;
-            }
-        })
-        if (exist) {
-            return exist;
+    async findOne(name: string): Promise<Todo> {
+        let todo = await this.todoRepository.findOne({ where: { name: name } });
+        if (todo) {
+            return todo;
         }
-        return "Todo not found"
+        throw new HttpException(
+            'Todo not found',
+            404
+        )
     }
 
-    create(newtodo: AddTodoDto) {
-        const todo = new Todo();
-        let exist = false;
-        this.todos.forEach((test) => {
-            if (test.name == newtodo.name) {
-                exist = true;
-            }
-        })
-        if (exist) {
-            return "Todo already exist"
+    async create(newtodo: AddTodoDto) {
+        let todo = await this.todoRepository.findOne({ where: { name: newtodo.name } });
+        if (!todo) {
+            todo = new Todo();
+            todo.name = newtodo.name;
+            todo.description = newtodo.description;
+            todo.completed = false;
+            this.todoRepository.save(todo);
+            return "Todo created successfully"
         }
-        todo.name = newtodo.name;
-        todo.description = newtodo.description;
-        todo.completed = false;
-        if (this.todos.length > 0) {
-            todo.id = this.todos[this.todos.length - 1].id + 1;
-        }
-        else {
-            todo.id = 1;
-        }
-        todo.CreatedAt = new Date();
-        todo.UpdatedAt = new Date();
-        todo.DeletedAt = null;
-        this.todos.push(todo);
-        return "Todo created successfully"
+        throw new HttpException(
+            'Todo already exist',
+            400
+        )
     }
 
-    update(todo: UpdateTodoDto) {
-        let exist = false;
-        this.todos.forEach((test) => {
-            if (test.name == todo.name) {
-                exist = true;
-                test.completed = todo.completed;
-                test.UpdatedAt = new Date();
-            }
-        })
-        if (exist) {
+    async update(newtodo: UpdateTodoDto) {
+        let todo = await this.todoRepository.findOne({ where: { name: newtodo.name } });
+        if (todo) {
+            todo.completed = newtodo.completed;
+            this.todoRepository.save(todo);
             return "Todo updated successfully"
         }
-        return "Todo not found"
+        throw new HttpException(
+            'Todo not found',
+            404
+        )
     }
 
-    delete(name: string) {
-        let exist = false;
-        this.todos.forEach((test) => {
-            if (test.name == name) {
-                exist = true;
-                test.DeletedAt = new Date();
-            }
-        })
-        if (exist) {
+    async softDelete(name: string) {
+        let todo = await this.todoRepository.findOne({ where: { name: name } });
+        if (todo) {
+            await this.todoRepository.softDelete(name);
             return "Todo deleted successfully"
         }
-        return "Todo not found"
+        throw new HttpException(
+            'Todo not found',
+            404
+        )
     }
 
-    getStatus() {
-        let completed = 0;
-        let incompleted = 0;
-        this.todos.forEach((todo) => {
-            if (todo.completed) {
-                completed++;
-            }
-            else {
-                incompleted++;
-            }
-        })
+    async delete(name: string) {
+        let todo = await this.todoRepository.findOne({ where: { name: name } });
+        if (todo) {
+            await this.todoRepository.delete(todo);
+            return "Todo deleted successfully"
+        }
+        throw new HttpException(
+            'Todo not found',
+            404
+        )
+    }
+
+    async restore(name: string) {
+        let todo = await this.todoRepository.findOne({ where: { name: name } });
+        let restored;
+        if (!todo) {
+            restored = await this.todoRepository.restore(name);
+            return "Todo Recovered Successfully"
+        }
+        throw new HttpException(
+            'Cant perform this action',
+            400
+        )
+    }
+
+    async getStatus() {
+        let completed = await this.todoRepository.count({ where: { completed: true } });
+        let incompleted = await this.todoRepository.count({ where: { completed: false } });
         return {
-            completed: completed,
-            incompleted: incompleted
+            "completed": completed,
+            "incompleted": incompleted
         }
     }
 }
