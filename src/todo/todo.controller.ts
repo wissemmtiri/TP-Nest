@@ -1,70 +1,79 @@
-import { Body, Controller, Delete, Get, Param, Post, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Patch, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { ParamsDTO } from './dto/search-params.dto';
+import { AuthGuard } from 'src/core/guards/auth.guard';
 
 
-@Controller('todo')
+@Controller()
 export class TodoController {
-    constructor(private readonly todoService: TodoService) { }
-    @Get()
+    constructor(
+        private readonly todoService: TodoService
+    ) { }
+
+    @Get('todos')
     findAll(
-        @Query('page') page: number = 1
+        @Query('page', ParseIntPipe) page: number = 1
     ): Promise<Todo[]> {
         return this.todoService.findAll(page);
     }
 
+    @UseGuards(AuthGuard)
     @Get('/status')
     getStatus() {
         return this.todoService.getStatus();
     }
 
-    @Get('/search')
+    @Get('todo/search')
     findBy(
         @Body() params: ParamsDTO
     ) {
-        console.log(params);
         return this.todoService.findBy(params);
     }
 
-    @Get('/:name')
+    @Get('todo/:name')
     findOne(
         @Param('name') name: string
     ) {
         return this.todoService.findOne(name);
     }
 
-    @Post()
+    @UseGuards(AuthGuard)
+    @Post('addtodo')
     createTodo(
         @Body() todo: AddTodoDto
     ) {
         return this.todoService.create(todo);
     }
 
-    @Patch()
+    @UseGuards(AuthGuard)
+    @Patch('updatetodo')
     updateTodo(
         @Body() todo: UpdateTodoDto
     ) {
         return this.todoService.update(todo);
     }
 
-    @Delete('soft-delete/:name')
+    @UseGuards(AuthGuard)
+    @Delete('todo/soft-delete/:name')
     softDeleteTodo(
         @Param('name') name: string,
     ) {
         return this.todoService.softDelete(name);
     }
 
-    @Get('delete/:name')
+    @UseGuards(AuthGuard)
+    @Get('todo/delete/:name')
     hardDeleteTodo(
         @Param('name') name: string,
     ) {
         return this.todoService.delete(name);
     }
 
-    @Get('restore/:name')
+    @UseGuards(AuthGuard)
+    @Get('todo/restore/:name')
     restoreTodo(
         @Param('name') name: string,
     ) {
