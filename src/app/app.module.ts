@@ -4,10 +4,13 @@ import { AppService } from './app.service';
 import { TodoModule } from '../todo/todo.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
+import { UsersModule } from 'src/users/users.module';
+import { CvsModule } from 'src/cvs/cvs.module';
+import { SkillsModule } from 'src/skills/skills.module';
 
 dotenv.config()
 @Module({
-  imports: [TodoModule, TypeOrmModule.forRoot(
+  imports: [TodoModule, UsersModule, CvsModule, SkillsModule, TypeOrmModule.forRoot(
     {
       type: 'mysql',
       host: process.env.DB_HOST,

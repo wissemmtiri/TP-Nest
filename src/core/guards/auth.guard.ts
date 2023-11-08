@@ -18,7 +18,8 @@ export class AuthGuard implements CanActivate {
                 {
                     secret: process.env.SECRET_KEY
                 }
-            )
+            );
+
             const UserId = payload["UserId"];
             request["UserId"] = UserId;
         } catch {
