@@ -6,9 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), JwtModule.register({
-    secret: process.env.SECRET_KEY,
-  })],
+  imports: [TypeOrmModule.forFeature([User]), JwtModule.register(
+    {
+      secret: process.env.SECRET_KEY
+    }
+  )],
   controllers: [UsersController],
   providers: [UsersService, JwtService]
 })

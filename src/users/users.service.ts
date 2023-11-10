@@ -1,6 +1,5 @@
 import { HttpStatus, HttpException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -48,13 +47,21 @@ export class UsersService {
       const user = await this.userRepository.findOne({ where: { email: loginCreds.email } });
       const password = await bcrypt.hash(loginCreds.password, user.salt || '');
       if (user && (password === user.password)) {
-        const payload = { UserId: user.id };
+        const payload = {
+          UserId: user.id
+        };
         const token = await this.JwtService.signAsync(
           payload,
           {
             secret: process.env.SECRET_KEY
           }
         )
+        let testpayload = await this.JwtService.verifyAsync(
+          token,
+          {
+            secret: process.env.SECRET_KEY
+          }
+        );
         await this.userRepository.save(user);
         return {
           "USER": user.username,
@@ -78,23 +85,46 @@ export class UsersService {
 
   //------------------------------------------------------------------
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async findAll() {
+    let users = await this.userRepository.find();
+    users.forEach(user => {
+      delete user.password;
+      delete user.salt;
+      delete user.UpdatedAt;
+      delete user.DeletedAt;
+    });
+    return users;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOne(email: string) {
+    console.log(email);
+    let user = await this.userRepository.findOne({ where: { email: email } });
+    if (user) {
+      delete user.password;
+      delete user.salt;
+      delete user.UpdatedAt;
+      delete user.DeletedAt;
+      return user;
+    }
+    else {
+      throw new HttpException(
+        'User not found',
+        HttpStatus.NOT_FOUND
+      )
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async delete(UserId: number) {
+    try {
+      const user = await this.userRepository.findOne({ where: { id: UserId } });
+      await this.userRepository.delete(user);
+      return { "Message": "User Deleted Successfully" };
+    }
+    catch {
+      throw new HttpException(
+        'Error deleting User',
+        HttpStatus.NOT_ACCEPTABLE
+      )
+    }
   }
 }

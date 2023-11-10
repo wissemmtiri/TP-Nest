@@ -14,7 +14,7 @@ export class TodoService {
         private todoRepository: Repository<Todo>
     ) { }
 
-    async findAll(page: number): Promise<Todo[]> {
+    async findAll(page: number = 1): Promise<Todo[]> {
         let start = (page - 1) * 2;
         let end = start + 2;
         let todos = [];

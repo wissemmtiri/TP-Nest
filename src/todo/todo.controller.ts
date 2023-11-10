@@ -13,14 +13,14 @@ export class TodoController {
         private readonly todoService: TodoService
     ) { }
 
+    @UseGuards(AuthGuard)
     @Get('todos')
     findAll(
-        @Query('page', ParseIntPipe) page: number = 1
+        @Query('page') page: number = 1
     ): Promise<Todo[]> {
         return this.todoService.findAll(page);
     }
 
-    @UseGuards(AuthGuard)
     @Get('/status')
     getStatus() {
         return this.todoService.getStatus();

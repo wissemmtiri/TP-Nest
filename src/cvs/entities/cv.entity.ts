@@ -1,11 +1,11 @@
 import { TimeStampColumns } from "src/generics/timestamp.entities";
 import { Skill } from "src/skills/entities/skill.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Cv extends TimeStampColumns {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column()

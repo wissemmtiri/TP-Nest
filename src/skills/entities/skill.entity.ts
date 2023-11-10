@@ -1,10 +1,10 @@
 import { Cv } from "src/cvs/entities/cv.entity";
 import { TimeStampColumns } from "src/generics/timestamp.entities";
-import { Column, Entity, ManyToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Skill extends TimeStampColumns {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
