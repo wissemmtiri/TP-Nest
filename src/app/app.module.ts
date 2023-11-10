@@ -4,9 +4,9 @@ import { AppService } from './app.service';
 import { TodoModule } from '../todo/todo.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
-import { UsersModule } from 'src/users/users.module';
-import { CvsModule } from 'src/cvs/cvs.module';
-import { SkillsModule } from 'src/skills/skills.module';
+import { UsersModule } from '../users/users.module';
+import { CvsModule } from '../cvs/cvs.module';
+import { SkillsModule } from '../skills/skills.module';
 
 dotenv.config()
 @Module({

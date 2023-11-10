@@ -12,8 +12,8 @@ export class SkillsService {
   ) { }
 
   async create(skill: CreateSkillDto) {
-    await this.skillRepository.save(skill);
-    return 'Skill created successfully';
+    return await this.skillRepository.save(skill);
+
   }
 
   async findAll() {

@@ -3,8 +3,8 @@ import { CreateCvDto } from './dto/create-cv.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cv } from './entities/cv.entity';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Skill } from 'src/skills/entities/skill.entity';
+import { User } from '../users/entities/user.entity';
+import { Skill } from '../skills/entities/skill.entity';
 
 @Injectable()
 export class CvsService {
@@ -28,8 +28,7 @@ export class CvsService {
       cv.job = createCvDto.job;
       cv.path = createCvDto.path;
       cv.user = user;
-      await this.cvRepository.save(cv);
-      return 'Cv created successfully';
+      return await this.cvRepository.save(cv);
     }
     catch {
       throw new HttpException(

@@ -1,6 +1,6 @@
-import { TimeStampColumns } from "src/generics/timestamp.entities";
-import { Skill } from "src/skills/entities/skill.entity";
-import { User } from "src/users/entities/user.entity";
+import { TimeStampColumns } from "../../generics/timestamp.entities";
+import { Skill } from "../../skills/entities/skill.entity";
+import { User } from "../../users/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

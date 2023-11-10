@@ -4,7 +4,7 @@ import { Todo } from './entities/todo.entity';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { ParamsDTO } from './dto/search-params.dto';
-import { AuthGuard } from 'src/core/guards/auth.guard';
+import { AuthGuard } from '../core/guards/auth.guard';
 
 
 @Controller()

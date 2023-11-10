@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Delete, UseGuards, Req } from '@nestjs/com
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { AuthGuard } from 'src/core/guards/auth.guard';
+import { AuthGuard } from '../core/guards/auth.guard';
 import { Request } from 'express';
 import { SearchUserDto } from './dto/search-user.dto';
 

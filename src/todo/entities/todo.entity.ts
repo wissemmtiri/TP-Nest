@@ -1,4 +1,4 @@
-import { TimeStampColumns } from "src/generics/timestamp.entities";
+import { TimeStampColumns } from "../../generics/timestamp.entities";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { Status } from "../enums/status.enum";
 

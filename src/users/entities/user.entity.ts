@@ -1,5 +1,5 @@
-import { Cv } from "src/cvs/entities/cv.entity";
-import { TimeStampColumns } from "src/generics/timestamp.entities";
+import { Cv } from "../../cvs/entities/cv.entity";
+import { TimeStampColumns } from "../../generics/timestamp.entities";
 import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

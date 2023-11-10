@@ -31,8 +31,7 @@ export class UsersService {
           HttpStatus.NOT_ACCEPTABLE
         )
       }
-      await this.userRepository.save(userdb);
-      return { "Message": "User Added Successfully" };
+      return await this.userRepository.save(userdb);
     }
     catch {
       throw new HttpException(
